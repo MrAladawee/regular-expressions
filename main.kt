@@ -81,10 +81,13 @@ fun main(args: Array<String>) {
      */
 
     val url = URL("https://www.gutenberg.org/files/2638/2638-0.txt")
-    text = url.readText()
-    regex = Regex("\\bthe\\b", RegexOption.IGNORE_CASE)
-    println(text.count())
-    //result = regex.findAll(text)
-    //println(result.count())
+    var site = url.openConnection()
+    site.connectTimeout = 500000000
+    val inputText = site.url.readText()
+    val regexPattern = Regex("""\bPART I(.*?)\bPART II""", RegexOption.DOT_MATCHES_ALL)
+    val matchResult = regexPattern.findAll(inputText).map { it.value }.toList().joinToString(" ")
+    val regexPattern2 = Regex("\\bthe\\b", RegexOption.IGNORE_CASE)
+    val the = regexPattern2.findAll(matchResult).map { it.value }.toList()
+    println("Количество слов 'the' в первой главе: ${the.size}")
 
 }
